@@ -3,8 +3,8 @@ import java.util.LinkedList;
 
 public class SistemaDeFicheros {
 
-  int tamCluster = 300;
-  int tamInodos = 150;
+  int tamCluster = 10;
+  int tamInodos = 10;
   int sizeCluster = 1;
   
   ArrayList<Boolean> mapaCluster;//False es libre True es ocupado
@@ -209,7 +209,7 @@ public class SistemaDeFicheros {
     return clusterDestino;
   }
 
-  public void anadirArchivo(String name, String direccion, float size) {
+  public boolean anadirArchivo(String name, String direccion, float size) {
     int clus;
     int conta = 0;
   
@@ -222,6 +222,7 @@ public class SistemaDeFicheros {
         if(conta == ((Directorio)(listaCluster.get(0))).listaContenido.size()) {  //TODO OK        
           ((Directorio)(listaCluster.get(0))).listaContenido.add(new EntradaDir(name,buscarCluster(),true));
           crearAr(size,name);
+          return true;
         }
       }
       else {
@@ -233,10 +234,12 @@ public class SistemaDeFicheros {
           if(conta == ((Directorio)(listaCluster.get(0))).listaContenido.size()) {//TODO codigo a cambiar
             ((Directorio)(listaCluster.get(clus))).listaContenido.add(new EntradaDir(name,buscarCluster(),true));
             crearAr(size,name);
+            return true;
           }
         }
       }
     }
+    return false;
   }
   
   private void crearAr(float size,String name){
@@ -287,7 +290,7 @@ public class SistemaDeFicheros {
     }
   }
 
-  public void borrarArchivo(String name, String direccion, boolean eliminacionEspecifica) {
+  public boolean borrarArchivo(String name, String direccion, boolean eliminacionEspecifica) {
     String [] miDir = direccion.split("/");
     int clusterDelDirectorio;
   
@@ -314,13 +317,15 @@ public class SistemaDeFicheros {
       
           if(eliminacionEspecifica) {
             directorioDeArchivo.listaContenido.remove(indexListaContenido);
+            return true;
           }
         }    
       }
     }
+    return false;
   }
 
-  public void borrarDirectorio(String name, String direccion, boolean soyElPrimero) {
+  public boolean borrarDirectorio(String name, String direccion, boolean soyElPrimero) {
   
     String [] miDir = direccion.split("/");
     String direccionNueva;
@@ -386,9 +391,12 @@ public class SistemaDeFicheros {
           int busquedaDelInodo = buscarInodo(clusterOriginal);
           mapaInodos.set(busquedaDelInodo,false);
           mapaCluster.set(listaInodos.get(busquedaDelInodo).punteros.get(0),false);
+          return true;
         }
       }
     }
+    if(soyElPrimero)return false;
+    else return true;
   }
   
   public int buscarInodo (int clusterBusqueda) {
