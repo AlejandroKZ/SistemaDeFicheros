@@ -429,5 +429,43 @@ public class SistemaDeFicheros {
   
     return conta;
   }
-}
 
+  public ArrayList<Integer> comprobarInodos(String name, String direccion){
+	 
+	  String[] miDireccion = direccion.split("/");
+	  int longitudDireccion = miDireccion.length;
+	  int entrandoEnDirectorio = 1;
+	  int clusterDirectorioContenedor = 0;
+	  EntradaDir directorioContenedor;
+	  ArrayList<Integer> inodosADevolver = new ArrayList<Integer>();
+	  int index;
+	  
+	  while(entrandoEnDirectorio < longitudDireccion){//Buscamos el cluster del directorio que contiene al archivo name		  
+		 index = buscarIndex((Directorio)listaCluster.get(clusterDirectorioContenedor), miDireccion[entrandoEnDirectorio]);
+		 clusterDirectorioContenedor = ((Directorio)listaCluster.get(clusterDirectorioContenedor))
+				 						.listaContenido.get(index).cluster;
+		 entrandoEnDirectorio++;
+	  }
+	  
+	  //Calculamos el cluster de name
+	  index = buscarIndex((Directorio)listaCluster.get(clusterDirectorioContenedor), name);
+	  int clusterArchivo = ((Directorio)listaCluster.get(clusterDirectorioContenedor))
+				 						.listaContenido.get(index).cluster;
+
+	index = 0;
+	if(listaCluster.get(clusterArchivo).getClass() == Directorio.class){ 
+	inodosADevolver.add(buscarInodo(clusterArchivo));//Inodo del directorio que vamos a boarr
+	 while(index < ((Directorio)listaCluster.get(clusterArchivo)).listaContenido.size()){//su contenido
+		  inodosADevolver.add(((Directorio)listaCluster.get(clusterArchivo))
+				  				.listaContenido.get(index).cluster);
+		  index++;
+	  }
+	}else{
+		inodosADevolver.add(buscarInodo(clusterArchivo));//Inodo del archivo a borrar
+	}
+	  return inodosADevolver;
+  }
+  
+  
+  
+}

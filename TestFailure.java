@@ -1,5 +1,11 @@
 import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+
 import junit.framework.TestCase;
+
+
+
 
 public class TestFailure extends TestCase {
 		
@@ -146,7 +152,7 @@ public void testSobrepasarTamDeArchivo() throws Exception {
 public void testArchivosEnDirectorio() throws Exception {
 	SistemaDeFicheros sf = new SistemaDeFicheros();
 	sf.anadirDirectorio("Carpeta", "C:");
-	sf.anadirArchivo("a", "C:/Carpeta", 1);
+	sf.anadirArchivo("a", "C:/Carpeta", 2);
 	
 	if(sf.anadirArchivo("b", "C:/Carpeta", 1)){
 		System.out.println("---------Test Archivos en directorios:---------");	
@@ -160,8 +166,32 @@ public void testArchivosEnDirectorio() throws Exception {
 public void testBorrarArchivoEnC() throws Exception {
 	SistemaDeFicheros sf = new SistemaDeFicheros();
 	sf.anadirArchivo("a", "C:", 1);
+	ArrayList<Boolean>mapaInodosEsperado = new ArrayList<Boolean>(sf.mapaInodos);//Hacemos una copia del mapa actual
+	ArrayList<Boolean>mapaClusterEsperado = new ArrayList<Boolean>(sf.mapaCluster);//Hacemos una copia del mapa actual
+	ArrayList<Integer>inodosCambiados = sf.comprobarInodos("a", "C:");//buscamos los inodos que hemos cambiado
+	ArrayList<Integer>clustersCambiados = new ArrayList<Integer>();
+	int index = 0;
 	
-	if(sf.borrarArchivo("a", "C:", true)){
+	while(index < inodosCambiados.size()){//Modificamos el mapa para obetener el mapa esperado despues de borrar el directorio
+		mapaInodosEsperado.set(inodosCambiados.get(index), false);
+		index++;
+	}
+	
+	index = 0;	
+	while(index < inodosCambiados.size()){//Recolectamos los cluster que se van de modificar
+		clustersCambiados.addAll(sf.listaInodos
+				.get(inodosCambiados.get(index))
+				.punteros);//Obtenemos los cluster de cada inodo
+		index++;
+	}
+	
+	index = 0;
+	while(index < clustersCambiados.size()){//Modificamos el mapa para obetener el mapa esperado despues de borrar el directorio
+		mapaClusterEsperado.set(clustersCambiados.get(index), false);
+		index++;
+	}
+	if(sf.borrarArchivo("a", "C:", true) && mapaInodosEsperado.equals(sf.mapaInodos) 
+		&& mapaClusterEsperado.equals(sf.mapaCluster)){
 		System.out.println("---------Test Borrar Archivo en C:---------");	
 		sf.mostrarContenidoCluster();
 		sf.mostrarContenidoInodos();
@@ -172,6 +202,7 @@ public void testBorrarArchivoEnC() throws Exception {
 
 public void testBorrarArchivoInexistenteEnC() throws Exception {
 	SistemaDeFicheros sf = new SistemaDeFicheros();
+	
 	
 	if(sf.borrarArchivo("a", "C:", true)){
 		System.out.println("---------Test Borrar Archivo Inexistente en C:---------");	
@@ -185,8 +216,33 @@ public void testBorrarArchivoInexistenteEnC() throws Exception {
 public void testBorrarDiretorioEnC() throws Exception {
 	SistemaDeFicheros sf = new SistemaDeFicheros();
 	sf.anadirDirectorio("a", "C:");
+	ArrayList<Boolean>mapaInodosEsperado = new ArrayList<Boolean>(sf.mapaInodos);//Hacemos una copia del mapa actual
+	ArrayList<Boolean>mapaClusterEsperado = new ArrayList<Boolean>(sf.mapaCluster);//Hacemos una copia del mapa actual
+	ArrayList<Integer>inodosCambiados = sf.comprobarInodos("a", "C:");//buscamos los inodos que hemos cambiado
+	ArrayList<Integer>clustersCambiados = new ArrayList<Integer>();
+	int index = 0;
 	
-	if(sf.borrarDirectorio("a", "C:", true)){
+	while(index < inodosCambiados.size()){//Modificamos el mapa para obetener el mapa esperado despues de borrar el directorio
+		mapaInodosEsperado.set(inodosCambiados.get(index), false);
+		index++;
+	}
+	
+	index = 0;	
+	while(index < inodosCambiados.size()){//Recolectamos los cluster que se van de modificar
+		clustersCambiados.addAll(sf.listaInodos
+				.get(inodosCambiados.get(index))
+				.punteros);//Obtenemos los cluster de cada inodo
+		index++;
+	}
+	
+	index = 0;
+	while(index < clustersCambiados.size()){//Modificamos el mapa para obetener el mapa esperado despues de borrar el directorio
+		mapaClusterEsperado.set(clustersCambiados.get(index), false);
+		index++;
+	}
+	
+	if(sf.borrarDirectorio("a", "C:", true) && mapaInodosEsperado.equals(sf.mapaInodos)
+		&& mapaClusterEsperado.equals(sf.mapaCluster)){
 		System.out.println("---------Test Borrar Archivo en C:---------");	
 		sf.mostrarContenidoCluster();
 		sf.mostrarContenidoInodos();
@@ -211,8 +267,33 @@ public void testBorrarDiretorioEnDirectorio() throws Exception {
 	SistemaDeFicheros sf = new SistemaDeFicheros();
 	sf.anadirDirectorio("a", "C:");
 	sf.anadirDirectorio("b", "C:/a");
+	ArrayList<Boolean>mapaInodosEsperado = new ArrayList<Boolean>(sf.mapaInodos);//Hacemos una copia del mapa actual
+	ArrayList<Boolean>mapaClusterEsperado = new ArrayList<Boolean>(sf.mapaCluster);//Hacemos una copia del mapa actual
+	ArrayList<Integer>inodosCambiados = sf.comprobarInodos("b", "C:/a");//buscamos los inodos que hemos cambiado
+	ArrayList<Integer>clustersCambiados = new ArrayList<Integer>();
+	int index = 0;
 	
-	if(sf.borrarDirectorio("b", "C:/a", true)){
+	while(index < inodosCambiados.size()){//Modificamos el mapa para obetener el mapa esperado despues de borrar el directorio
+		mapaInodosEsperado.set(inodosCambiados.get(index), false);
+		index++;
+	}
+	
+	index = 0;	
+	while(index < inodosCambiados.size()){//Recolectamos los cluster que se van de modificar
+		clustersCambiados.addAll(sf.listaInodos
+				.get(inodosCambiados.get(index))
+				.punteros);//Obtenemos los cluster de cada inodo
+		index++;
+	}
+	
+	index = 0;
+	while(index < clustersCambiados.size()){//Modificamos el mapa para obetener el mapa esperado despues de borrar el directorio
+		mapaClusterEsperado.set(clustersCambiados.get(index), false);
+		index++;
+	}
+	
+	if(sf.borrarDirectorio("b", "C:/a", true) && mapaInodosEsperado.equals(sf.mapaInodos)
+			&& mapaClusterEsperado.equals(sf.mapaCluster)){
 		System.out.println("---------Test Borrar Directorio dentro de un directorio:---------");	
 		sf.mostrarContenidoCluster();
 		sf.mostrarContenidoInodos();
@@ -221,12 +302,37 @@ public void testBorrarDiretorioEnDirectorio() throws Exception {
 	
 }
 
+//A
 public void testBorrarDiretorioConDirectorioContenido() throws Exception {
 	SistemaDeFicheros sf = new SistemaDeFicheros();
 	sf.anadirDirectorio("a", "C:");
 	sf.anadirDirectorio("b", "C:/a");
+	ArrayList<Boolean>mapaInodosEsperado = new ArrayList<Boolean>(sf.mapaInodos);//Hacemos una copia del mapa actual
+	ArrayList<Boolean>mapaClusterEsperado = new ArrayList<Boolean>(sf.mapaCluster);//Hacemos una copia del mapa actual
+	ArrayList<Integer>inodosCambiados = sf.comprobarInodos("a", "C:");//buscamos los inodos que hemos cambiado
+	ArrayList<Integer>clustersCambiados = new ArrayList<Integer>();
+	int index = 0;
 	
-	if(sf.borrarDirectorio("a", "C:", true)){
+	while(index < inodosCambiados.size()){//Modificamos el mapa para obetener el mapa esperado despues de borrar el directorio
+		mapaInodosEsperado.set(inodosCambiados.get(index), false);
+		index++;
+	}
+	
+	index = 0;	
+	while(index < inodosCambiados.size()){//Recolectamos los cluster que se van de modificar
+		clustersCambiados.addAll(sf.listaInodos
+				.get(inodosCambiados.get(index))
+				.punteros);//Obtenemos los cluster de cada inodo
+		index++;
+	}
+	
+	index = 0;
+	while(index < clustersCambiados.size()){//Modificamos el mapa para obetener el mapa esperado despues de borrar el directorio
+		mapaClusterEsperado.set(clustersCambiados.get(index), false);
+		index++;
+	}
+	if(sf.borrarDirectorio("a", "C:", true) && mapaInodosEsperado.equals(sf.mapaInodos)
+		&& mapaClusterEsperado.equals(sf.mapaCluster)){
 		System.out.println("---------Test Borrar Directorio con un directorio:---------");	
 		sf.mostrarContenidoCluster();
 		sf.mostrarContenidoInodos();
@@ -240,8 +346,33 @@ public void testBorrarDiretorioConContenido() throws Exception {
 	sf.anadirDirectorio("a", "C:");
 	sf.anadirDirectorio("b", "C:/a");
 	sf.anadirArchivo("c", "C:/a", 1);
+	ArrayList<Boolean>mapaInodosEsperado = new ArrayList<Boolean>(sf.mapaInodos);//Hacemos una copia del mapa actual
+	ArrayList<Boolean>mapaClusterEsperado = new ArrayList<Boolean>(sf.mapaCluster);//Hacemos una copia del mapa actual
+	ArrayList<Integer>inodosCambiados = sf.comprobarInodos("a", "C:");//buscamos los inodos que hemos cambiado
+	ArrayList<Integer>clustersCambiados = new ArrayList<Integer>();
+	int index = 0;
 	
-	if(sf.borrarDirectorio("a", "C:", true)){
+	while(index < inodosCambiados.size()){//Modificamos el mapa para obetener el mapa esperado despues de borrar el directorio
+		mapaInodosEsperado.set(inodosCambiados.get(index), false);
+		index++;
+	}
+	
+	index = 0;	
+	while(index < inodosCambiados.size()){//Recolectamos los cluster que se van de modificar
+		clustersCambiados.addAll(sf.listaInodos
+				.get(inodosCambiados.get(index))
+				.punteros);//Obtenemos los cluster de cada inodo
+		index++;
+	}
+	
+	index = 0;
+	while(index < clustersCambiados.size()){//Modificamos el mapa para obetener el mapa esperado despues de borrar el directorio
+		mapaClusterEsperado.set(clustersCambiados.get(index), false);
+		index++;
+	}
+	
+	if(sf.borrarDirectorio("a", "C:", true) && mapaInodosEsperado.equals(sf.mapaInodos) 
+	&& mapaClusterEsperado.equals(sf.mapaCluster)){
 		System.out.println("---------Test Borrar Directorio con un directorio:---------");	
 		sf.mostrarContenidoCluster();
 		sf.mostrarContenidoInodos();
@@ -257,8 +388,33 @@ public void testBorrado() throws Exception {
 	sf.anadirDirectorio("b", "C:/a");
 	sf.anadirDirectorio("a", "C:/e");
 	sf.anadirDirectorio("a", "C:/a/b");
+	ArrayList<Boolean>mapaInodosEsperado = new ArrayList<Boolean>(sf.mapaInodos);//Hacemos una copia del mapa actual
+	ArrayList<Boolean>mapaClusterEsperado = new ArrayList<Boolean>(sf.mapaCluster);//Hacemos una copia del mapa actual
+	ArrayList<Integer>inodosCambiados = sf.comprobarInodos("a", "C:");//buscamos los inodos que hemos cambiado
+	ArrayList<Integer>clustersCambiados = new ArrayList<Integer>();
+	int index = 0;
 	
-	if(sf.borrarDirectorio("a", "C:", true)){
+	while(index < inodosCambiados.size()){//Modificamos el mapa para obetener el mapa esperado despues de borrar el directorio
+		mapaInodosEsperado.set(inodosCambiados.get(index), false);
+		index++;
+	}
+	
+	index = 0;	
+	while(index < inodosCambiados.size()){//Recolectamos los cluster que se van de modificar
+		clustersCambiados.addAll(sf.listaInodos
+				.get(inodosCambiados.get(index))
+				.punteros);//Obtenemos los cluster de cada inodo
+		index++;
+	}
+	
+	index = 0;
+	while(index < clustersCambiados.size()){//Modificamos el mapa para obetener el mapa esperado despues de borrar el directorio
+		mapaClusterEsperado.set(clustersCambiados.get(index), false);
+		index++;
+	}
+	
+	if(sf.borrarDirectorio("a", "C:", true) && mapaInodosEsperado.equals(sf.mapaInodos)
+		&& mapaClusterEsperado.equals(sf.mapaCluster)){
 		System.out.println("---------Test Borrado---------");	
 		sf.mostrarContenidoCluster();
 		sf.mostrarContenidoInodos();
